@@ -1,5 +1,5 @@
 import neologdn
-from patent import Patent
+from patent import PatentS
 import pprint
 import os 
 import tools
@@ -21,11 +21,11 @@ dict_eff_words = dict.fromkeys(effect_words)
 patents_list = []
 for patent in dict_eff_words.keys():
     file_path = path+patent
-    new = Patent(file_path)
+    new = PatentS(file_path)
     patents_list.append(new)
 
 ### TESTTING ###
-#pprint.pprint(patents_list[0].doc)
+pprint.pprint(patents_list[0].doc)
 
 ### 複合名詞の抽出 ###
 m = MeCab.Tagger("-Ochasen")
@@ -98,6 +98,6 @@ for patname in dict_eff_words.keys():
                 new.append(value)
         dict_eff_words[patname] = new
 
-tools.save_jsonfile('./out-compound.json', dict_eff_words)
+tools.save_jsonfile('./out-compound-S.json', dict_eff_words)
 
 
