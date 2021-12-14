@@ -2,8 +2,10 @@ import json
 import tools
 import pprint
 import re
+import numpy as np
 from IGNORE_WORDS import get_regex
 
+"""
 fileF = open("out-compound-FILTERED.json", "r")
 Fil = json.load(fileF)
 fileF.close()
@@ -55,3 +57,52 @@ for key in list_of_kanji.keys():
 tools.save_jsonfile("list_of_kanji.json", list_of_kanji)
 tools.save_jsonfile("top_kanji_list.json", top_kanji)
 tools.save_jsonfile("out-compound-FILTERED-noascii.json", new_compound_list)
+"""
+
+
+
+def initialize_dict_to_list(dit):
+    for key in dit.keys():
+        dit[key] = []
+    return dit 
+
+
+###FIND THE TOP PAIR WORD BASED 発明の効果 ###
+
+hatsumei = tools.load_jsonfile("result_02.json")
+#print(hatsumei["1992073168.txt"][0]["発明の効果"])
+patent_files = list(hatsumei.keys())
+distance = tools.load_jsonfile("distance.json")
+#print(distance[patent_files[0]])
+
+for patent in patent_files:
+    
+    word_list = hatsumei[patent][0]["発明の効果"]
+    
+
+    ### 初期化辞書 ###
+    res = dict.fromkeys(word_list)
+    res = initialize_dict_to_list(res)
+
+    top_total = len(word_list)
+
+    ### FLAG vector for total word ###
+    flag = np.zeros(top_total)
+    flag += top_total
+
+    for expword, invword, distance in distance[patent]:
+        index = word_list.index(invword)
+        if(flag[index] != 0):
+            res[invword].append((expword, invword, distance))
+            flag[index] -= 1
+        else:
+            min = res[invword][0][2]
+            indextochange = 0
+
+            for i in range(len(res[invword])):
+                if(res[invword][i][2] >= distance):
+                    min = distance        
+        
+    print(res)
+    
+    break
